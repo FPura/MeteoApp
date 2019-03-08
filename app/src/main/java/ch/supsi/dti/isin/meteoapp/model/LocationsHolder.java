@@ -9,6 +9,7 @@ import java.util.UUID;
 public class LocationsHolder {
 
     private static LocationsHolder sLocationsHolder;
+
     private List<Location> mLocations;
 
     public static LocationsHolder get(Context context) {
