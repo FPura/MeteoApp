@@ -1,12 +1,12 @@
 package ch.supsi.dti.isin.meteoapp.activities;
 
+import ch.supsi.dti.isin.meteoapp.fragments.DetailLocationFragment;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 import java.util.UUID;
-
-import ch.supsi.dti.isin.meteoapp.fragments.DetailLocationFragment;
 
 public class DetailActivity extends SingleFragmentActivity {
     private static final String EXTRA_LOCATION_ID = "ch.supsi.dti.isin.meteoapp.location_id";
