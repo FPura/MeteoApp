@@ -18,33 +18,51 @@ public class MainActivity extends SingleFragmentActivity {
 
     private static final int REQ_CODE = 100;
 
+    //TAG
+    private final String PERMISSION_REQUEST_TAG = "Permission request";
+    private final String PERMISSION_STATUS_TAG = "Permission status";
+
     @Override
     protected Fragment createFragment() {
-
+        /* ContextCompat.checkSelfPermission(Context context, String permission)
+         * https://developer.android.com/reference/android/support/v4/content/ContextCompat.html#checkSelfPermission(android.content.Context,%20java.lang.String)
+         * PERMISSION_DENIED  == -1
+         * PERMISSION_GRANTED ==  0
+         */
         if (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.i("", "Permission not granted");
+            Log.i(PERMISSION_REQUEST_TAG, "DENIED");
+
+            /* requestPermissions (Activity activity, String[] permissions, int requestCode)
+             * https://developer.android.com/reference/android/support/v4/app/ActivityCompat.html#requestPermissions(android.app.Activity,%20java.lang.String[],%20int)
+             */
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_CODE);
         } else {
-            Log.i("", "Permission is granted");
+            Log.i(PERMISSION_REQUEST_TAG, "GRANTED");
             startLocationListener();
         }
-
         return new ListFragment();
     }
 
     private void startLocationListener() {
+        /* LocationParams(LocationAccuracy accuracy, long interval, float distance)
+         * https://github.com/mrmans0n/smart-location-lib/blob/master/library/src/main/java/io/nlopez/smartlocation/location/config/LocationParams.java
+         */
         LocationParams.Builder builder = new LocationParams.Builder()
                 .setAccuracy(LocationAccuracy.HIGH)
                 .setDistance(0)
                 .setInterval(5000); // 5 sec
+
+        /* SmartLocation(Context context, Logger logger, boolean preInitialize)
+         * https://github.com/mrmans0n/smart-location-lib/blob/master/library/src/main/java/io/nlopez/smartlocation/SmartLocation.java
+         */
         SmartLocation.with(this).location().continuous().config(builder.build())
                 .start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
-                        Log.i("ciao", "Location" + location);
-
-                    }});
+                        Log.i(PERMISSION_STATUS_TAG, " Location: " + location);
+                    }
+                });
     }
 
     @Override
@@ -52,11 +70,11 @@ public class MainActivity extends SingleFragmentActivity {
         switch (requestCode) {
             case REQ_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // ho ottenuto i permessi
-                    Log.i("", "Permission was granted");
+                    // PERMISSION_GRANTED
+                    Log.i("Permission status", "GRANTED");
                     startLocationListener();
                 }
-                return;
+                break;
             }
         }
     }

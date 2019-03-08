@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ch.supsi.dti.isin.meteoapp">
-
+    <!--> Permission request, FINE = hig precision, COARSE = low precision <-->
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
