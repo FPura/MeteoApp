@@ -37,7 +37,8 @@ public class MainActivity extends SingleFragmentActivity {
         LocationParams.Builder builder = new LocationParams.Builder()
                 .setAccuracy(LocationAccuracy.HIGH)
                 .setDistance(0)
-                .setInterval(5000); // 5 sec
+                .setInterval(5000)
+                ; // 5 sec
         SmartLocation.with(this).location().continuous().config(builder.build())
                 .start(new OnLocationUpdatedListener() {
                     @Override
