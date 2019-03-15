@@ -71,7 +71,7 @@ public class ListFragment extends Fragment {
     //TODO: Collegare le API per verificare che la città esista.
     public void addNewLocation(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Title");
+        builder.setTitle("City name");
 
 
         final EditText input = new EditText(getActivity());
