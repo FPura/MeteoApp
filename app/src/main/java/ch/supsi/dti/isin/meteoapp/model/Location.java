@@ -3,8 +3,8 @@ package ch.supsi.dti.isin.meteoapp.model;
 import java.util.UUID;
 
 public class Location {
-    private UUID Id;
-    private String mName;
+    public UUID Id;
+    public String mName;
 
     public UUID getId() {
         return Id;
@@ -24,5 +24,14 @@ public class Location {
 
     public Location() {
         Id = UUID.randomUUID();
+    }
+    public Location(UUID Id, String mName) {
+        this.Id = Id;
+        this.mName = mName;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + mName + "  Id: " + Id;
     }
 }
