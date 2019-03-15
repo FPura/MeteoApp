@@ -37,7 +37,6 @@ public class LocationsHolder {
             if (location.getId().equals(id))
                 return location;
         }
-
         return null;
     }
 }
