@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.fragments.ListFragment;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -21,6 +22,7 @@ public class MainActivity extends SingleFragmentActivity {
     //TAG
     private final String PERMISSION_REQUEST_TAG = "Permission request";
     private final String PERMISSION_STATUS_TAG = "Permission status";
+    private ListFragment listFragment;
 
     @Override
     protected Fragment createFragment() {
@@ -41,7 +43,9 @@ public class MainActivity extends SingleFragmentActivity {
             Log.i(PERMISSION_REQUEST_TAG, "GRANTED");
             startLocationListener();
         }
-        return new ListFragment();
+
+        listFragment = new ListFragment();
+        return listFragment;
     }
 
     private void startLocationListener() {
@@ -65,6 +69,7 @@ public class MainActivity extends SingleFragmentActivity {
                 });
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -79,12 +84,18 @@ public class MainActivity extends SingleFragmentActivity {
         }
     }
 
-    private void insertData(){
-
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(listFragment.getDB() != null)
+            listFragment.getDB().close();
     }
-    private void readData(){
 
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
     }
+
+
 }
