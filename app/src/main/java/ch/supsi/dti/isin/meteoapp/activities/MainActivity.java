@@ -78,4 +78,13 @@ public class MainActivity extends SingleFragmentActivity {
             }
         }
     }
+
+    private void insertData(){
+
+
+    }
+    private void readData(){
+
+
+    }
 }
