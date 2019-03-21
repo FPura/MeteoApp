@@ -60,9 +60,7 @@ public class ListFragment extends Fragment {
         return view;
     }
 
-
     // Menu
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -83,8 +81,7 @@ public class ListFragment extends Fragment {
     //TODO: Collegare le API per verificare che la città esista.
     public void addNewLocation(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Title");
-
+        builder.setTitle("City");
 
         final EditText input = new EditText(getActivity());
 
@@ -115,7 +112,6 @@ public class ListFragment extends Fragment {
     }
 
     // Holder
-
     private class LocationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mNameTextView;
         private Location mLocation;
@@ -139,7 +135,6 @@ public class ListFragment extends Fragment {
     }
 
     // Adapter
-
     private class LocationAdapter extends RecyclerView.Adapter<LocationHolder> {
         private List<Location> mLocations;
 

@@ -69,7 +69,6 @@ public class MainActivity extends SingleFragmentActivity {
                 });
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -96,6 +95,4 @@ public class MainActivity extends SingleFragmentActivity {
         super.onStart();
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
     }
-
-
 }

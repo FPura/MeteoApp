@@ -39,10 +39,11 @@ public class DetailLocationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_detail_location, container, false);
 
-        mIdTextView = v.findViewById(R.id.id_textView);
-        mIdTextView.setText(mLocation.toString());
+        String word[] = mLocation.toString().split(" ");
+
+        mIdTextView = v.findViewById(R.id.city_name);
+        mIdTextView.setText(word[1]); //max 10 letters
 
         return v;
     }
 }
-

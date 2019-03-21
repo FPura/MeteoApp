@@ -4,6 +4,16 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#2FCF1D</color>
     <color name="colorAccent2">#D10617</color>
+
     <color name="menuColor">#03A9F4</color>
     <color name="menuColorDark">#000000</color>
+    <color name="menuColorAccent">#3F51B5</color>
+
+    <color name="menuButtonColor">#FFFFFF</color>
+
+    <color name="elementBackgroundColor">#BEFFFFFF</color>
+
+    <color name="elementTextColor">#000000</color>
+
+    <color name="detailElementBackground">#EBFFFFFF</color>
 </resources>

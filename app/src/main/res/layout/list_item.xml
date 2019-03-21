@@ -1,12 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tableLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="*"
+    android:orientation="vertical"
+    android:background="@color/elementBackgroundColor"
+    android:layout_marginTop="10dp"
+    android:padding="10dp">
+
+    <TableRow
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:text="Sementina"
+            android:textColor="@color/elementTextColor"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:scaleType="fitEnd"
+            android:layout_height="40dp"
+            android:src="@drawable/sun" />
+    </TableRow>
+</TableLayout>
+
+
+
+
+<!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:background="@color/elementBackgroundColor"
+    android:layout_marginTop="10dp"
+    android:gravity="center"
+    android:padding="10dp">
+
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"/>
+        android:fontFamily="sans-serif-medium"
+        android:maxHeight="40dp"
+        android:text="Title"
+        android:textColor="@color/elementTextColor"
+        android:drawableEnd="@drawable/sun"
+        android:textSize="18dp" />
+
 </LinearLayout>
+<
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="6" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:background="@android:color/white" >
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:text="Magasin"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:gravity="end">
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:gravity="right"
+                android:src="@drawable/sun" />
+            </LinearLayout>
+        </TableRow>
+    </LinearLayout>
+</LinearLayout>
+-->
