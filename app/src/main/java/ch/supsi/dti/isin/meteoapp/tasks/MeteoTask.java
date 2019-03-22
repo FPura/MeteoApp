@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import java.util.List;
 
 public class MeteoTask extends AsyncTask<Void, Void, List<String>> {
+
+    private String apiKey = "815504bb440299e3ebbb76868cbc7c47";
     private OnTaskCompleted listener;
     public MeteoTask(OnTaskCompleted listener) {
         this.listener = listener;
