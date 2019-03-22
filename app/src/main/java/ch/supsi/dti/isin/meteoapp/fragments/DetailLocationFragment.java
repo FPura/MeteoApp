@@ -32,17 +32,18 @@ public class DetailLocationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID locationId = (UUID) getArguments().getSerializable(ARG_LOCATION_ID);
-        mLocation = LocationsHolder.get(getActivity()).getLocation(locationId);
+        mLocation = LocationsHolder.get().getLocation(locationId);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_detail_location, container, false);
 
-        mIdTextView = v.findViewById(R.id.id_textView);
-        mIdTextView.setText(mLocation.getId().toString());
+        String word[] = mLocation.toString().split(" ");
+
+        mIdTextView = v.findViewById(R.id.city_name);
+        mIdTextView.setText(word[1]); //max 10 letters
 
         return v;
     }
 }
-
