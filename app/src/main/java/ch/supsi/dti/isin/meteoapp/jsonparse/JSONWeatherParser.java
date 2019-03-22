@@ -19,7 +19,7 @@ public class JSONWeatherParser {
             JSONObject resultObject = (JSONObject) parser.parse(json);
 
             JSONObject weatherInfo = (JSONObject)((JSONArray) resultObject.get("weather")).get(0);
-            weather.setTemperature((float)((JSONObject) resultObject.get("main")).get("temp"));
+            weather.setTemperature((double)((JSONObject) resultObject.get("main")).get("temp"));
             weather.setDescription((String) weatherInfo.get("description"));
             weather.setMain((String) weatherInfo.get("main"));
             weather.setWeatherResourceImage(iconAPI + weatherInfo.get("icon") + ".png");

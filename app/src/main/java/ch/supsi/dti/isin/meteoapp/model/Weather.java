@@ -3,7 +3,7 @@ package ch.supsi.dti.isin.meteoapp.model;
 public class Weather {
 
     private String weatherResourceImage;
-    private float temperature;
+    private double temperature;
     private String description;
     private String locationName;
     private String main;
@@ -17,11 +17,11 @@ public class Weather {
         this.weatherResourceImage = weatherResourceImage;
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
