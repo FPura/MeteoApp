@@ -44,7 +44,7 @@ public class MeteoFetcher {
     //TODO: implement Meteo API fetch
     public Weather fetchItems(String apikey, String cityname){
         try{
-            String url = Uri.parse("http://api.openweathermap.org/data/2.5/forecast")
+            String url = Uri.parse("https://api.openweathermap.org/data/2.5/weather")
                     .buildUpon()
                     .appendQueryParameter("q",cityname)
                     .appendQueryParameter("APPID",apikey)

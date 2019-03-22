@@ -33,6 +33,7 @@ import ch.supsi.dti.isin.meteoapp.db.LocationsContentValues;
 import ch.supsi.dti.isin.meteoapp.db.LocationsCursorWrapper;
 import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.model.Location;
+import ch.supsi.dti.isin.meteoapp.model.Weather;
 import ch.supsi.dti.isin.meteoapp.tasks.MeteoTask;
 import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
 
@@ -113,7 +114,7 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
     }
 
     @Override
-    public void onTaskCompleted(List<String> items) {
+    public void onTaskCompleted(Weather weather) {
         /*
         LocationsHolder lh = LocationsHolder.get();
         lh.getLocations().add(newLocation);

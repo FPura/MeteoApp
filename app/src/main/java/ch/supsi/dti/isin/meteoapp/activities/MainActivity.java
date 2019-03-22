@@ -20,7 +20,7 @@ import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 
-public class MainActivity extends SingleFragmentActivity implements OnTaskCompleted {
+public class MainActivity extends SingleFragmentActivity {
 
     private static final int REQ_CODE = 100;
 
@@ -110,8 +110,5 @@ public class MainActivity extends SingleFragmentActivity implements OnTaskComple
     MeteoTask t = new MeteoTask(MainActivity.this);
     t.execute();
      */
-    @Override
-    public void onTaskCompleted(List<String> items) {
 
-    }
 }
