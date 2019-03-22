@@ -1,11 +1,20 @@
 package ch.supsi.dti.isin.meteoapp.tasks;
 
+import android.net.Uri;
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import ch.supsi.dti.isin.meteoapp.jsonparse.JSONWeatherParser;
+import ch.supsi.dti.isin.meteoapp.model.Location;
+import ch.supsi.dti.isin.meteoapp.model.Weather;
 
 public class MeteoFetcher {
 
@@ -33,7 +42,20 @@ public class MeteoFetcher {
     }
 
     //TODO: implement Meteo API fetch
-    public List<String> fetchItems(){
+    public Weather fetchItems(String apikey, String cityname){
+        try{
+            String url = Uri.parse("http://api.openweathermap.org/data/2.5/forecast")
+                    .buildUpon()
+                    .appendQueryParameter("q",cityname)
+                    .appendQueryParameter("APPID",apikey)
+                    .build()
+                    .toString();
+
+            String jsonString = getUrlString(url);
+
+            return JSONWeatherParser.parse(jsonString);
+        }catch (Exception e){ Log.e("Exceptions",e.getMessage());}
+
         return null;
     }
 }

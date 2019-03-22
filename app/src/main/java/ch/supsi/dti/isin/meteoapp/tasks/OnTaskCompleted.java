@@ -1,7 +1,7 @@
 package ch.supsi.dti.isin.meteoapp.tasks;
 
-import java.util.List;
+import ch.supsi.dti.isin.meteoapp.model.Weather;
 
 public interface OnTaskCompleted {
-    void onTaskCompleted(List<String> items);
+    void onTaskCompleted(Weather weather);
 }

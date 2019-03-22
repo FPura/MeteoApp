@@ -4,19 +4,26 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
-public class MeteoTask extends AsyncTask<Void, Void, List<String>> {
+import ch.supsi.dti.isin.meteoapp.model.Location;
+import ch.supsi.dti.isin.meteoapp.model.Weather;
+
+public class MeteoTask extends AsyncTask<Void, Void, Weather> {
 
     private String apiKey = "815504bb440299e3ebbb76868cbc7c47";
     private OnTaskCompleted listener;
-    public MeteoTask(OnTaskCompleted listener) {
+    private Location location;
+
+    public MeteoTask(OnTaskCompleted listener, Location location) {
         this.listener = listener;
+        this.location = location;
+    }
+
+    @Override
+    protected Weather doInBackground(Void... voids) { // chiamo doInBackground() senza parametri
+        return new MeteoFetcher().fetchItems(apiKey, location.getName());
     }
     @Override
-    protected List<String> doInBackground(Void... voids) { // chiamo doInBackground() senza parametri
-        return new MeteoFetcher().fetchItems();
-    }
-    @Override
-    protected void onPostExecute(List<String> items) {
-        listener.onTaskCompleted(items); // alla fine del Task richiamo il metodo onTaskCompleted() del listener
+    protected void onPostExecute(Weather weather) {
+        listener.onTaskCompleted(weather); // alla fine del Task richiamo il metodo onTaskCompleted() del listener
     }
 }

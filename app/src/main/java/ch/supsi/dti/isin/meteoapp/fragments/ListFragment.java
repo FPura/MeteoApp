@@ -98,7 +98,7 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
                newLocation.setName(input.getText().toString());
 
                Log.i("APIConnection","Starting");
-               MeteoTask meteoTask = new MeteoTask(ListFragment.this);
+               MeteoTask meteoTask = new MeteoTask(ListFragment.this, newLocation);
                meteoTask.execute();
             }
         });
