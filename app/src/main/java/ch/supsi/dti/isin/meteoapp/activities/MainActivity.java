@@ -3,19 +3,24 @@ package ch.supsi.dti.isin.meteoapp.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import java.util.List;
+
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.fragments.ListFragment;
+import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 
-public class MainActivity extends SingleFragmentActivity {
+public class MainActivity extends SingleFragmentActivity implements OnTaskCompleted {
 
     private static final int REQ_CODE = 100;
 
@@ -23,6 +28,7 @@ public class MainActivity extends SingleFragmentActivity {
     private final String PERMISSION_REQUEST_TAG = "Permission request";
     private final String PERMISSION_STATUS_TAG = "Permission status";
     private ListFragment listFragment;
+    private static final String MY_KEY = "key";
 
     @Override
     protected Fragment createFragment() {
@@ -45,6 +51,7 @@ public class MainActivity extends SingleFragmentActivity {
         }
 
         listFragment = new ListFragment();
+
         return listFragment;
     }
 
@@ -93,6 +100,18 @@ public class MainActivity extends SingleFragmentActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if(listFragment == null){
+            listFragment = new ListFragment();
+        }
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
+    }
+
+    /*
+    MeteoTask t = new MeteoTask(MainActivity.this);
+    t.execute();
+     */
+    @Override
+    public void onTaskCompleted(List<String> items) {
+
     }
 }
