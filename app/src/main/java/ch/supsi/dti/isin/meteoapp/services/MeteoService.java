@@ -7,8 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
-/*
+
 public class MeteoService extends IntentService {
+
+    private static final String TAG = "TestService";
+
+    public MeteoService() {
+        super(TAG);
+    }
 
     public static void setServiceAlarm(Context context, boolean isOn) {
         // creo l'intent e lo impacchetto in un PendingIntent
@@ -33,4 +39,4 @@ public class MeteoService extends IntentService {
     }
 
 
-}*/
+}
