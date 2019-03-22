@@ -190,7 +190,7 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
             }
         } finally {
             cursor.close();
-            LocationsHolder.addLocations(mLocations);
+            LocationsHolder.setLocations(mLocations);
         }
     }
 

@@ -30,6 +30,10 @@ public class LocationsHolder {
         sLocationsHolder.addAll(mLocations);
     }
 
+    public static void setLocations(List<Location> mLocations) {
+        sLocationsHolder = new LocationsHolder(mLocations);
+    }
+
     private LocationsHolder() {
         mLocations = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
