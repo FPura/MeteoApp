@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,21 +20,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.supsi.dti.isin.meteoapp.R;
 import ch.supsi.dti.isin.meteoapp.activities.DetailActivity;
+import ch.supsi.dti.isin.meteoapp.activities.MainActivity;
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.db.DbSchema;
 import ch.supsi.dti.isin.meteoapp.db.LocationsContentValues;
 import ch.supsi.dti.isin.meteoapp.db.LocationsCursorWrapper;
 import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.model.Location;
+import ch.supsi.dti.isin.meteoapp.tasks.MeteoTask;
+import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements OnTaskCompleted {
     private RecyclerView mLocationRecyclerView;
     private LocationAdapter mAdapter;
     private SQLiteDatabase mDatabase;
@@ -94,11 +97,9 @@ public class ListFragment extends Fragment {
                Location newLocation = new Location();
                newLocation.setName(input.getText().toString());
 
-               LocationsHolder lh = LocationsHolder.get();
-               lh.getLocations().add(newLocation);
-               insertData(newLocation);
-
-               Toast.makeText(getActivity(),newLocation.getName()+" added succesfully",Toast.LENGTH_SHORT).show();
+               Log.i("APIConnection","Starting");
+               MeteoTask meteoTask = new MeteoTask(ListFragment.this);
+               meteoTask.execute();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -110,6 +111,16 @@ public class ListFragment extends Fragment {
 
         builder.show();
     }
+
+    @Override
+    public void onTaskCompleted(List<String> items) {
+        /*
+        LocationsHolder lh = LocationsHolder.get();
+        lh.getLocations().add(newLocation);
+        insertData(newLocation);
+        */
+    }
+
 
     // Holder
     private class LocationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
