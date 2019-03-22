@@ -179,7 +179,7 @@ public class ListFragment extends Fragment {
             }
         } finally {
             cursor.close();
-            LocationsHolder.addLocations(mLocations);
+            LocationsHolder.setLocations(mLocations);
         }
     }
 
