@@ -1,5 +1,7 @@
 package ch.supsi.dti.isin.meteoapp.model;
 
+import android.graphics.Bitmap;
+
 public class Weather {
 
     private String weatherResourceImage;
@@ -7,6 +9,7 @@ public class Weather {
     private String description;
     private String locationName;
     private String main;
+    private Bitmap bitmap;
 
 
     public String getWeatherResourceImage() {
@@ -47,5 +50,13 @@ public class Weather {
 
     public void setMain(String main) {
         this.main = main;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 }

@@ -1,5 +1,7 @@
 package ch.supsi.dti.isin.meteoapp.tasks;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
@@ -53,9 +55,42 @@ public class MeteoFetcher {
 
             String jsonString = getUrlString(url);
 
-            return JSONWeatherParser.parse(jsonString);
+            Weather weather = JSONWeatherParser.parse(jsonString);
+            weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage().replace("http", "https")));
+            return weather;
         }catch (Exception e){ Log.e("Exceptions",e.getMessage());}
 
         return null;
+    }
+
+    public Weather fetchItemsCoord(String apikey, double longitude, double latitude){
+        try{
+            String url = Uri.parse("https://api.openweathermap.org/data/2.5/weather")
+                    .buildUpon()
+                    .appendQueryParameter("lon",Double.toString(longitude))
+                    .appendQueryParameter("lat",Double.toString(latitude))
+                    .appendQueryParameter("APPID",apikey)
+                    .build()
+                    .toString();
+
+            String jsonString = getUrlString(url);
+
+            Weather weather = JSONWeatherParser.parse(jsonString);
+            weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage().replace("http", "https")));
+            return weather;
+        }catch (Exception e){ Log.e("Exceptions",e.getMessage());}
+
+        return null;
+    }
+
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            byte[] b = getUrlBytes(src);
+
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

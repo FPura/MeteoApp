@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.model.Location;
 import ch.supsi.dti.isin.meteoapp.model.Weather;
 import ch.supsi.dti.isin.meteoapp.tasks.MeteoTask;
+import ch.supsi.dti.isin.meteoapp.tasks.MeteoTaskCoord;
 import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
 
 public class ListFragment extends Fragment implements OnTaskCompleted {
@@ -48,8 +50,32 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         setHasOptionsMenu(true);
         mDatabase = new DatabaseHelper(getActivity()).getWritableDatabase();
         readData();
+        updateAll();
     }
 
+    private void updateAll() {
+
+        Counter counter = new Counter(LocationsHolder.get().getLocations().size());
+        for(Location location : LocationsHolder.get().getLocations()){
+            MeteoTask meteoTask = new MeteoTask(counter, location);
+            meteoTask.execute();
+        }
+    }
+
+    private class Counter implements OnTaskCompleted{
+        private int runningTasks;
+
+        public Counter(int numberOfTasks) {
+            this.runningTasks = numberOfTasks;
+        }
+        @Override
+        public void onTaskCompleted(Location newLocation) {
+            
+            if(--runningTasks == 0){
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,7 +108,6 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         }
     }
 
-    //TODO: Collegare le API per verificare che la città esista.
     public void addNewLocation(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("City");
@@ -114,24 +139,27 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
     }
 
     @Override
-    public void onTaskCompleted(Weather weather) {
-        /*
-        LocationsHolder lh = LocationsHolder.get();
-        lh.getLocations().add(newLocation);
-        insertData(newLocation);
-        */
+    public void onTaskCompleted(Location newLocation) {
+
+        if(newLocation.getWeather() != null){
+            LocationsHolder.addLocation(newLocation);
+            mAdapter.notifyDataSetChanged();
+            insertData(newLocation);
+        }
     }
 
 
     // Holder
     private class LocationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mNameTextView;
+        private ImageView mImageView;
         private Location mLocation;
 
         public LocationHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item, parent, false));
             itemView.setOnClickListener(this);
             mNameTextView = itemView.findViewById(R.id.name);
+            mImageView = itemView.findViewById(R.id.previewWeather);
         }
 
         @Override
@@ -141,9 +169,13 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         }
 
         public void bind(Location location) {
+            mNameTextView.setText(location.getName());
+            if(location.getWeather() != null) {
+                mImageView.setImageBitmap(location.getWeather().getBitmap());
+            }
             mLocation = location;
-            mNameTextView.setText(mLocation.getName());
         }
+
     }
 
     // Adapter
@@ -170,6 +202,7 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         public int getItemCount() {
             return mLocations.size();
         }
+
     }
 
     private void insertData(Location location){

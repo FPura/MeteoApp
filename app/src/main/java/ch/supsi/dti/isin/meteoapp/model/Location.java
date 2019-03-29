@@ -6,6 +6,10 @@ public class Location {
     public UUID Id;
     public String mName;
 
+    private double longitude;
+    private double latitude;
+    private Weather weather;
+
     public UUID getId() {
         return Id;
     }
@@ -28,6 +32,30 @@ public class Location {
     public Location(UUID Id, String mName) {
         this.Id = Id;
         this.mName = mName;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
     }
 
     @Override

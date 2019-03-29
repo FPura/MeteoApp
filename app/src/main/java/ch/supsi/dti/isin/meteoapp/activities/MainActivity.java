@@ -30,6 +30,8 @@ public class MainActivity extends SingleFragmentActivity {
     private ListFragment listFragment;
     private static final String MY_KEY = "key";
 
+    private ch.supsi.dti.isin.meteoapp.model.Location currentLocation = null;
+
     @Override
     protected Fragment createFragment() {
         /* ContextCompat.checkSelfPermission(Context context, String permission)
@@ -62,7 +64,7 @@ public class MainActivity extends SingleFragmentActivity {
         LocationParams.Builder builder = new LocationParams.Builder()
                 .setAccuracy(LocationAccuracy.HIGH)
                 .setDistance(0)
-                .setInterval(5000); // 5 sec
+                .setInterval(60000); // 1 min
 
         /* SmartLocation(Context context, Logger logger, boolean preInitialize)
          * https://github.com/mrmans0n/smart-location-lib/blob/master/library/src/main/java/io/nlopez/smartlocation/SmartLocation.java
@@ -72,6 +74,11 @@ public class MainActivity extends SingleFragmentActivity {
                     @Override
                     public void onLocationUpdated(Location location) {
                         Log.i(PERMISSION_STATUS_TAG, " Location: " + location);
+                        if(currentLocation == null){
+                            currentLocation = new ch.supsi.dti.isin.meteoapp.model.Location();
+                        }
+                        currentLocation.setLongitude(location.getLongitude());
+                        currentLocation.setLatitude(location.getLatitude());
                     }
                 });
     }
@@ -104,6 +111,10 @@ public class MainActivity extends SingleFragmentActivity {
             listFragment = new ListFragment();
         }
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
+    }
+
+    public ch.supsi.dti.isin.meteoapp.model.Location getCurrentLocation() {
+        return currentLocation;
     }
 
     /*

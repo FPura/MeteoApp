@@ -30,17 +30,24 @@ public class LocationsHolder {
         sLocationsHolder.addAll(mLocations);
     }
 
+    public static void addLocation(Location mLocation) {
+        if (sLocationsHolder == null) {
+            sLocationsHolder = new LocationsHolder();
+        }
+        sLocationsHolder.getLocations().add(mLocation);
+    }
+
     public static void setLocations(List<Location> mLocations) {
         sLocationsHolder = new LocationsHolder(mLocations);
     }
 
     private LocationsHolder() {
         mLocations = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+       /* for (int i = 0; i < 10; i++) {
             Location location = new Location();
             location.setName("Location # " + i);
             mLocations.add(location);
-        }
+        }*/
     }
 
     private LocationsHolder(List<Location> mLocations) {
