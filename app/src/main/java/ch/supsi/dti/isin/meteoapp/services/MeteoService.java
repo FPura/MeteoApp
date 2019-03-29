@@ -16,7 +16,7 @@ import ch.supsi.dti.isin.meteoapp.R;
 
 public class MeteoService extends IntentService {
 
-    private static final String TAG = "TestService";
+    private static final String TAG = "MeteoService";
     private static PendingIntent pi;
 
     public MeteoService() {
@@ -48,18 +48,19 @@ public class MeteoService extends IntentService {
     }
 
     private void sendNotification(String message) {
+        // in Android >= 8.0 devo registrare il canale delle notifiche a livello di sistema (prossima slide)
         // creo il contenuto della notifica
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "default")
-                //.setSmallIcon(R.drawable.snow)
+                .setSmallIcon(R.drawable.snow)
                 .setContentTitle("Brr...")
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mBuilder.setContentIntent(pi);
 
-
+        // creo il NotificationChannel, solo in caso di API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("MSC", "Meteo Service Channel", NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("Notification channel for updates on cold places (under 0 degrees)");
+            NotificationChannel channel = new NotificationChannel("MNC", "MeteoNotificationChannel", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Canale di notifiche per la temperatura");
 
             // registro il canale a livello di sistema
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -67,6 +68,10 @@ public class MeteoService extends IntentService {
 
             notificationManager.notify(0, mBuilder.build());
             Log.i("MSC","Notification sent");
+        } else {
+            NotificationManager mNotificationManager = (NotificationManager)
+                    getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, mBuilder.build());
         }
     }
 

@@ -116,10 +116,6 @@ public class MainActivity extends SingleFragmentActivity {
         MeteoService.setServiceAlarm(this, true);
     }
 
-    public ch.supsi.dti.isin.meteoapp.model.Location getCurrentLocation() {
-        return currentLocation;
-    }
-
     /*
     MeteoTask t = new MeteoTask(MainActivity.this);
     t.execute();
