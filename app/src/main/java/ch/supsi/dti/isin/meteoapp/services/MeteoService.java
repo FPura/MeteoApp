@@ -44,35 +44,30 @@ public class MeteoService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) { // metodo che risponde agli Intent
         Log.i("MSC","MeteoService called. Intent: " + intent);
-        sendNotification("It's very cold...");
+        if(aCityIsUnderZeroDegrees())
+            sendNotification("Brr...","It's very cold...");
     }
 
-    private void sendNotification(String message) {
-        // in Android >= 8.0 devo registrare il canale delle notifiche a livello di sistema (prossima slide)
-        // creo il contenuto della notifica
+    private boolean aCityIsUnderZeroDegrees() {
+        return true;
+    }
+
+    private void sendNotification(String title, String message) {
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default", "Meteo Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Meteo Service Channel to send notifications on temperature updates (whean a temperature goes under 0).");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "default")
                 .setSmallIcon(R.drawable.snow)
-                .setContentTitle("Brr...")
+                .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        mBuilder.setContentIntent(pi);
 
-        // creo il NotificationChannel, solo in caso di API 26+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("MNC", "MeteoNotificationChannel", NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Canale di notifiche per la temperatura");
-
-            // registro il canale a livello di sistema
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-
-            notificationManager.notify(0, mBuilder.build());
-            Log.i("MSC","Notification sent");
-        } else {
-            NotificationManager mNotificationManager = (NotificationManager)
-                    getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(0, mBuilder.build());
-        }
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
 
