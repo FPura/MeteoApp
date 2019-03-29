@@ -7,12 +7,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import ch.supsi.dti.isin.meteoapp.R;
+import ch.supsi.dti.isin.meteoapp.model.Location;
+import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 
 public class MeteoService extends IntentService {
 
@@ -44,12 +45,21 @@ public class MeteoService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) { // metodo che risponde agli Intent
         Log.i("MSC","MeteoService called. Intent: " + intent);
-        if(aCityIsUnderZeroDegrees())
-            sendNotification("Brr...","It's very cold...");
+
+        Location l = findACityUnderZero();
+        if(l != null) {
+            sendNotification("Brr...", "Temperature in "+ l.getName()+" is under 0 degrees.");
+        }
     }
 
-    private boolean aCityIsUnderZeroDegrees() {
-        return true;
+    private Location findACityUnderZero() {
+        for(Location l : LocationsHolder.get().getLocations()) {
+            if(l.getWeather().getTemperature() <= 0){
+                return l;
+            }
+        }
+
+        return null;
     }
 
     private void sendNotification(String title, String message) {
