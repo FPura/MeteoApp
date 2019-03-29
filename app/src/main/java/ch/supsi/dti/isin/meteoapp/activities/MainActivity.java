@@ -14,6 +14,7 @@ import java.util.List;
 
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.fragments.ListFragment;
+import ch.supsi.dti.isin.meteoapp.services.MeteoService;
 import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -104,6 +105,9 @@ public class MainActivity extends SingleFragmentActivity {
             listFragment = new ListFragment();
         }
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
+
+        MeteoService.setServiceAlarm(this, true);
+        startService(MeteoService.newIntent(this));
     }
 
     /*
