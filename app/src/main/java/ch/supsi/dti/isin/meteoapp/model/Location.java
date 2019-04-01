@@ -1,14 +1,18 @@
 package ch.supsi.dti.isin.meteoapp.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.UUID;
 
 public class Location {
-    public UUID Id;
-    public String mName;
+    private UUID Id;
+    private String name = null;
 
     private double longitude;
     private double latitude;
-    private Weather weather;
+    private Weather weather = null;
+
+    private boolean nameChanged = false;
 
     public UUID getId() {
         return Id;
@@ -19,26 +23,27 @@ public class Location {
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
-    public void setName(String name) {
-        mName = name;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public Location() {
         Id = UUID.randomUUID();
     }
-    public Location(UUID Id, String mName) {
+
+    public Location(final UUID Id, final String mName) {
         this.Id = Id;
-        this.mName = mName;
+        this.name = mName;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
@@ -46,7 +51,7 @@ public class Location {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
@@ -54,12 +59,21 @@ public class Location {
         return weather;
     }
 
-    public void setWeather(Weather weather) {
+    public void setWeather(final Weather weather) {
         this.weather = weather;
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return "Name: " + mName + "  Id: " + Id;
+        return "Name: " + name + "  Id: " + Id;
+    }
+
+    public boolean isNameChanged() {
+        return nameChanged;
+    }
+
+    public void setNameChanged(boolean nameChanged) {
+        this.nameChanged = nameChanged;
     }
 }

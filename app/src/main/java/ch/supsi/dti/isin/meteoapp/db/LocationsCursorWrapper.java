@@ -11,6 +11,8 @@ public class LocationsCursorWrapper extends CursorWrapper {
     public LocationsCursorWrapper(Cursor cursor) {
         super(cursor);
     }
+
+    // Return row of the table
     public Location getEntry() {
         String id = getString(getColumnIndex(DbSchema.Table.Cols.UUID));
         String name = getString(getColumnIndex(DbSchema.Table.Cols.NAME));

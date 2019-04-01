@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,65 +28,74 @@ import java.util.List;
 
 import ch.supsi.dti.isin.meteoapp.R;
 import ch.supsi.dti.isin.meteoapp.activities.DetailActivity;
-import ch.supsi.dti.isin.meteoapp.activities.MainActivity;
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.db.DbSchema;
 import ch.supsi.dti.isin.meteoapp.db.LocationsContentValues;
 import ch.supsi.dti.isin.meteoapp.db.LocationsCursorWrapper;
-import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.model.Location;
-import ch.supsi.dti.isin.meteoapp.model.Weather;
-import ch.supsi.dti.isin.meteoapp.tasks.MeteoTask;
-import ch.supsi.dti.isin.meteoapp.tasks.MeteoTaskCoord;
-import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompleted;
+import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
+import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompletedLocations;
+import ch.supsi.dti.isin.meteoapp.tasks.WeatherTask;
+import ch.supsi.dti.isin.meteoapp.tasks.WeathersTask;
 
-public class ListFragment extends Fragment implements OnTaskCompleted {
-    private RecyclerView mLocationRecyclerView;
-    private LocationAdapter mAdapter;
-    private SQLiteDatabase mDatabase;
+public class ListFragment extends Fragment implements OnTaskCompletedLocations {
+    private LocationAdapter adapter;
+    private SQLiteDatabase database;
+
+    //TODO (delete part)
+    private boolean delete = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Activate options menu
         setHasOptionsMenu(true);
-        mDatabase = new DatabaseHelper(getActivity()).getWritableDatabase();
-        readData();
+
+        // Create and/or open a database that will be used for reading and writing.
+        database = new DatabaseHelper(getActivity()).getWritableDatabase();
+
+        // Read locations from DB and load it in LocationHolder
+        readDataFromDB();
+
+        // Update Locations weather
         updateAll();
     }
 
+    // Update all the location weather
     private void updateAll() {
-
-        Counter counter = new Counter(LocationsHolder.get().getLocations().size());
-        for(Location location : LocationsHolder.get().getLocations()){
-            MeteoTask meteoTask = new MeteoTask(counter, location);
-            meteoTask.execute();
-        }
+        List<Location> locations = LocationsHolder.get().getLocations();
+        LocationsListener locationsListener = new LocationsListener();
+        new WeathersTask(locationsListener, locations).execute();
     }
 
-    private class Counter implements OnTaskCompleted{
-        private int runningTasks;
-
-        public Counter(int numberOfTasks) {
-            this.runningTasks = numberOfTasks;
-        }
+    // Notify the adapter all task was completed
+    private class LocationsListener implements OnTaskCompletedLocations {
         @Override
-        public void onTaskCompleted(Location newLocation) {
-            
-            if(--runningTasks == 0){
-                mAdapter.notifyDataSetChanged();
-            }
+        public void onTaskCompleted() {
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onTaskCompleted(Location location) {
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onTaskCompletedCoordinate(Location location) {
+            adapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mLocationRecyclerView = view.findViewById(R.id.recycler_view);
-        mLocationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        RecyclerView locationRecyclerView = view.findViewById(R.id.recycler_view);
+        locationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         List<Location> locations = LocationsHolder.get().getLocations();
-        mAdapter = new LocationAdapter(locations);
-        mLocationRecyclerView.setAdapter(mAdapter);
+        adapter = new LocationAdapter(locations);
+        locationRecyclerView.setAdapter(adapter);
 
         return view;
     }
@@ -97,18 +107,36 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         inflater.inflate(R.menu.fragment_list, menu);
     }
 
+
+    //TODO (delete part) trovare un modo per far si che quando schiaccia il tasto cancella avviene una modifca alla grafica,
+    // cosi che l'utente puo iniziare a cancellare le citta
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
                 addNewLocation();
                 return true;
+                /*
+            case R.id.menu_del:
+                MenuItem menuItem;
+                try {
+                    menuItem = getActivity().findViewById(R.id.menu_del);
+                    if (delete = !delete) {
+                        //DrawableCompat.setTint(menuItem.getIcon(), Color.RED);
+                    }
+                    else{
+                        //DrawableCompat.setTint(menuItem.getIcon(), Color.WHITE);
+                    }
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
+                }
+                */
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void addNewLocation(){
+    public void addNewLocation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("City");
 
@@ -120,12 +148,12 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               Location newLocation = new Location();
-               newLocation.setName(input.getText().toString());
+                Location newLocation = new Location();
+                newLocation.setName(input.getText().toString());
 
-               Log.i("APIConnection","Starting");
-               MeteoTask meteoTask = new MeteoTask(ListFragment.this, newLocation);
-               meteoTask.execute();
+                Log.i("APIConnection", "Starting");
+                WeatherTask weatherTask = new WeatherTask(ListFragment.this, newLocation);
+                weatherTask.execute();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -138,100 +166,179 @@ public class ListFragment extends Fragment implements OnTaskCompleted {
         builder.show();
     }
 
+
+    boolean checkIfIsDuplicate(Location location) {
+        // Get locations
+        List<Location> locations = LocationsHolder.get().getLocations();
+
+        // Check if exists location
+        return locations.stream().anyMatch(l -> l.getName().equals(location.getName()));
+    }
+
+    @Override
+    public void onTaskCompleted() {
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onTaskCompleted(Location newLocation) {
-
-        if(newLocation.getWeather() != null){
+        if (newLocation.getWeather() != null && !checkIfIsDuplicate(newLocation)) {
             LocationsHolder.addLocation(newLocation);
-            mAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
             insertData(newLocation);
         }
     }
 
+    @Override
+    public void onTaskCompletedCoordinate(Location update) {
+        if (update.getWeather() != null) {
+            if (!checkIfIsDuplicate(update)) {
+                LocationsHolder.addLocation(update);
+                adapter.notifyDataSetChanged();
+            } else if (update.isNameChanged()) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
 
     // Holder
     private class LocationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mNameTextView;
-        private ImageView mImageView;
-        private Location mLocation;
+        private TextView nameTextView;
+        private TextView tempTextView;
+        private ImageView imageView;
+        private Location location;
 
-        public LocationHolder(LayoutInflater inflater, ViewGroup parent) {
+        LocationHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item, parent, false));
             itemView.setOnClickListener(this);
-            mNameTextView = itemView.findViewById(R.id.name);
-            mImageView = itemView.findViewById(R.id.previewWeather);
+            nameTextView = itemView.findViewById(R.id.city_name);
+            tempTextView = itemView.findViewById(R.id.temp);
+            imageView = itemView.findViewById(R.id.previewWeather);
         }
 
         @Override
         public void onClick(View view) {
-            Intent intent = DetailActivity.newIntent(getActivity(), mLocation.getId());
-            startActivity(intent);
-        }
-
-        public void bind(Location location) {
-            mNameTextView.setText(location.getName());
-            if(location.getWeather() != null) {
-                mImageView.setImageBitmap(location.getWeather().getBitmap());
+            if (delete) {
+                deleteData((String) ((TextView) view).getText());
+            } else {
+                Intent intent = DetailActivity.newIntent(getActivity(), location.getId());
+                startActivity(intent);
             }
-            mLocation = location;
         }
 
+        void bind(Location location) {
+            nameTextView.setText(location.getName());
+            if (location.getWeather() != null) {
+                imageView.setImageBitmap(location.getWeather().getBitmap());
+                tempTextView.setText(location.getWeather().getTemperature() + " °K");
+            }
+            this.location = location;
+        }
     }
 
     // Adapter
-    private class LocationAdapter extends RecyclerView.Adapter<LocationHolder> {
-        private List<Location> mLocations;
+    public class LocationAdapter extends RecyclerView.Adapter<LocationHolder> {
+        private List<Location> locations;
 
-        public LocationAdapter(List<Location> locations) {
-            mLocations = locations;
+        LocationAdapter(List<Location> locations) {
+            this.locations = locations;
         }
 
+        @NonNull
         @Override
-        public LocationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public LocationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             return new LocationHolder(layoutInflater, parent);
         }
 
         @Override
-        public void onBindViewHolder(LocationHolder holder, int position) {
-            Location location = mLocations.get(position);
+        public void onBindViewHolder(@NonNull LocationHolder holder, int position) {
+            Location location = locations.get(position);
             holder.bind(location);
         }
 
         @Override
         public int getItemCount() {
-            return mLocations.size();
+            return locations.size();
         }
 
     }
 
-    private void insertData(Location location){
 
+    //TODO (delete part) controlalre se è corretto la funzione
+    private void deleteData(final String cityName) {
+
+        // Get location list
+        List<Location> locations = LocationsHolder.get().getLocations();
+
+        // Get the location from the locations
+        Location location = locations.stream().filter(l -> l.getName().compareTo(cityName) == 0).findAny().get();
+
+        // Delete it from DB
+        database.delete(DbSchema.Table.NAME, DbSchema.Table.NAME + " = " + location.getId() + " ;", null);
+
+        // Remove it from the list
+        locations.remove(location);
+    }
+
+    private void insertData(Location location) {
+
+        // Create a DB values with location
         ContentValues values = LocationsContentValues.getContentValues(location);
-        mDatabase.insert(DbSchema.Table.NAME, null, values);
-    }
-    private void readData(){
 
-        Cursor c = mDatabase.query(DbSchema.Table.NAME, null, null, null, null, null, null);
-        LocationsCursorWrapper cursor = new LocationsCursorWrapper(c);
-        List<Location> mLocations = new ArrayList<>();
+        // Insert location in the DB
+        database.insert(DbSchema.Table.NAME, null, values);
+    }
+
+
+    private void readDataFromDB() {
+        // List of cities
+        List<Location> locations = new ArrayList<>();
+
+        // DB cursor
+        Cursor DBCursor = null;
+
+        // Wrapper for the DB cursor
+        LocationsCursorWrapper cursor = null;
+
         try {
+            // Get DB cursor instance
+            DBCursor = database.query(DbSchema.Table.NAME, null, null, null, null, null, null);
+
+            // Get the wrapper
+            cursor = new LocationsCursorWrapper(DBCursor);
+
+            // Set at start of DB
             cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                Location entry = cursor.getEntry();
-                mLocations.add(entry);
-                cursor.moveToNext();
-            }
+
+            // Add the cities
+            for (; !cursor.isAfterLast(); cursor.moveToNext())
+                locations.add(cursor.getEntry());
+
+        } catch (Exception e) {
+
+            // Return an empty locations list if something gone wrong
+            locations = new ArrayList<>();
+
         } finally {
-            cursor.close();
-            LocationsHolder.setLocations(mLocations);
+            // Close cursor
+            if (cursor != null)
+                cursor.close();
+
+            // Close the DB
+            if (DBCursor != null)
+                DBCursor.close();
+
+            // Set the locations
+            LocationsHolder.setLocations(locations);
         }
     }
 
-    public SQLiteDatabase getDB(){
-        return mDatabase;
+    public SQLiteDatabase getDB() {
+        return database;
     }
-    public void setDB(SQLiteDatabase mDatabase){
-        this.mDatabase = mDatabase;
+
+    public void setDB(SQLiteDatabase mDatabase) {
+        this.database = mDatabase;
     }
 }

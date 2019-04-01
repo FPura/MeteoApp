@@ -8,35 +8,36 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
 
-public class MeteoService extends IntentService {
+public class WeatherService extends IntentService {
 
+    // Thread name
     private static final String TAG = "TestService";
 
-    public MeteoService() {
+    // Set the  Thread name
+    public WeatherService() {
         super(TAG);
     }
 
     public static void setServiceAlarm(Context context, boolean isOn) {
         // creo l'intent e lo impacchetto in un PendingIntent
-        Intent i = MeteoService.newIntent(context);
-        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        Intent intent = WeatherService.newIntent(context);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (isOn)
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),
-                    60000, pi); // 60'000 ms = 1 minuto
+                    60000, pendingIntent); // 60'000 ms = 1 minuto
         else {
-            alarmManager.cancel(pi);
-            pi.cancel();
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
         }
     }
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, MeteoService.class);
+    public static Intent newIntent(final Context context) {
+        return new Intent(context, WeatherService.class);
     }
+
     @Override
-    protected void onHandleIntent(Intent intent) { // metodo che risponde agli Intent
+    protected void onHandleIntent(final Intent intent) {
         Log.i("intent","Received an intent: " + intent);
     }
-
-
 }

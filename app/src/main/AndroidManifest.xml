@@ -19,6 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DetailActivity"></activity>
-        <service android:name=".services.MeteoService" />
+        <service android:name=".services.WeatherService" />
     </application>
 </manifest>

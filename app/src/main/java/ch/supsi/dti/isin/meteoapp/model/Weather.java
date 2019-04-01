@@ -16,7 +16,7 @@ public class Weather {
         return weatherResourceImage;
     }
 
-    public void setWeatherResourceImage(String weatherResourceImage) {
+    public void setWeatherResourceImage(final String weatherResourceImage) {
         this.weatherResourceImage = weatherResourceImage;
     }
 
@@ -24,7 +24,7 @@ public class Weather {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(final double temperature) {
         this.temperature = temperature;
     }
 
@@ -32,7 +32,7 @@ public class Weather {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -40,7 +40,7 @@ public class Weather {
         return locationName;
     }
 
-    public void setLocationName(String locationName) {
+    public void setLocationName(final String locationName) {
         this.locationName = locationName;
     }
 
@@ -48,7 +48,7 @@ public class Weather {
         return main;
     }
 
-    public void setMain(String main) {
+    public void setMain(final String main) {
         this.main = main;
     }
 
@@ -56,7 +56,7 @@ public class Weather {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    public void setBitmap(final Bitmap bitmap) {
         this.bitmap = bitmap;
     }
 }

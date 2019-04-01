@@ -1,8 +1,9 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_add"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="add city"
-        app:iconTint="@color/menuButtonColor"
-        app:showAsAction="always"/>
+        android:title="add"
+        app:iconTint="@color/menuAddButtonColor"
+        app:showAsAction="always" />
 </menu>

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#2FCF1D</color>
-    <color name="colorAccent2">#D10617</color>
-
     <color name="menuColor">#03A9F4</color>
     <color name="menuColorDark">#000000</color>
     <color name="menuColorAccent">#3F51B5</color>
 
-    <color name="menuButtonColor">#FFFFFF</color>
+    <color name="menuAddButtonColor">#FFFFFF</color>
+
+    <color name="menuDelButtonColor">#FFFFFF</color>
+
+    <color name="menuDelSelectedButtonColor">#FF0000</color>
 
     <color name="elementBackgroundColor">#BEFFFFFF</color>
 

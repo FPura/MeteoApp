@@ -1,68 +1,53 @@
 package ch.supsi.dti.isin.meteoapp.model;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import ch.supsi.dti.isin.meteoapp.activities.MainActivity;
-
 public class LocationsHolder {
 
-    private static LocationsHolder sLocationsHolder;
+    private static LocationsHolder locationsHolder;
 
-    private List<Location> mLocations;
-
-    public static LocationsHolder get() {
-        if (sLocationsHolder == null)
-            sLocationsHolder = new LocationsHolder();
-
-        return sLocationsHolder;
-    }
-
-    public static void addLocations(List<Location> mLocations) {
-        if (sLocationsHolder == null) {
-            sLocationsHolder = new LocationsHolder(mLocations);
-            return;
-        }
-
-        sLocationsHolder.addAll(mLocations);
-    }
-
-    public static void addLocation(Location mLocation) {
-        if (sLocationsHolder == null) {
-            sLocationsHolder = new LocationsHolder();
-        }
-        sLocationsHolder.getLocations().add(mLocation);
-    }
-
-    public static void setLocations(List<Location> mLocations) {
-        sLocationsHolder = new LocationsHolder(mLocations);
-    }
+    private List<Location> locations;
 
     private LocationsHolder() {
-        mLocations = new ArrayList<>();
-       /* for (int i = 0; i < 10; i++) {
-            Location location = new Location();
-            location.setName("Location # " + i);
-            mLocations.add(location);
-        }*/
+        locations = new ArrayList<>();
     }
 
-    private LocationsHolder(List<Location> mLocations) {
-        this.mLocations = new ArrayList<>(mLocations);
+    private LocationsHolder(final List<Location> locations) {
+        this.locations = new ArrayList<>(locations);
+    }
+
+    private void addAll(final List<Location> locations) {
+        this.locations.addAll(locations);
+    }
+
+    public static LocationsHolder get() {
+        if (locationsHolder == null)
+            locationsHolder = new LocationsHolder();
+        return locationsHolder;
+    }
+
+    public static void addLocation(final Location mLocation) {
+
+        if (locationsHolder == null)
+            locationsHolder = new LocationsHolder();
+
+        locationsHolder.getLocations().add(mLocation);
+    }
+
+    public static void setLocations(final List<Location> locations) {
+        locationsHolder = new LocationsHolder(locations);
     }
 
     public List<Location> getLocations() {
-        return mLocations;
+        return locations;
     }
 
-    private void addAll(List<Location> mLocations) {
-        this.mLocations.addAll(mLocations);
-    }
-    public Location getLocation(UUID id) {
-        for (Location location : mLocations) {
+    // Return UUID, we use it for DB search
+    public Location getLocation(final UUID id) {
+
+        for (Location location : locations) {
             if (location.getId().equals(id))
                 return location;
         }
