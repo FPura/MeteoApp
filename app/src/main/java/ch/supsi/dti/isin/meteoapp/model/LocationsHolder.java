@@ -62,10 +62,16 @@ public class LocationsHolder {
         return null;
     }
 
-    public static void clear(){
+    public static boolean delete(String name){
         if (locationsHolder == null)
-            locationsHolder = new LocationsHolder();
+            return false;
 
-        locationsHolder.getLocations().clear();
+       for(Location loc : locationsHolder.getLocations()){
+           if(loc.getName().equals(name)){
+               locationsHolder.getLocations().remove(loc);
+               return true;
+           }
+       }
+       return false;
     }
 }

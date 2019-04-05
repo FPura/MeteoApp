@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -206,7 +207,7 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
     }
 
     // Holder
-    private class LocationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class LocationHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         private TextView nameTextView;
         private TextView tempTextView;
         private ImageView imageView;
@@ -215,6 +216,7 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
         LocationHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item, parent, false));
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             nameTextView = itemView.findViewById(R.id.city_name);
             tempTextView = itemView.findViewById(R.id.temp);
             imageView = itemView.findViewById(R.id.previewWeather);
@@ -222,12 +224,36 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
         @Override
         public void onClick(View view) {
-            if (delete) {
-                deleteData((String) ((TextView) view).getText());
-            } else {
-                Intent intent = DetailActivity.newIntent(getActivity(), location.getId());
-                startActivity(intent);
+            Intent intent = DetailActivity.newIntent(getActivity(), location.getId());
+            startActivity(intent);
+        }
+
+        @Override
+        public boolean onLongClick(View view){
+
+            if(!location.isCurrentLocation()) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+                                deleteData(location.getName());
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Are you sure you want to delete this location?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
             }
+            return true;
         }
 
         void bind(Location location) {
@@ -272,21 +298,13 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
     }
 
-
-    //TODO (delete part) controlalre se è corretto la funzione
     private void deleteData(final String cityName) {
-
-        // Get location list
-        List<Location> locations = LocationsHolder.get().getLocations();
-
-        // Get the location from the locations
-        Location location = locations.stream().filter(l -> l.getName().compareTo(cityName) == 0).findAny().get();
-
-        // Delete it from DB
-        database.delete(DbSchema.Table.NAME, DbSchema.Table.NAME + " = " + location.getId() + " ;", null);
-
         // Remove it from the list
-        locations.remove(location);
+        if(LocationsHolder.delete(cityName)) {
+            // Delete it from DB
+            database.delete(DbSchema.Table.NAME, "name" + " = \"" + cityName + "\" ;", null);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void insertData(Location location) {
