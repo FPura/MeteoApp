@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import ch.supsi.dti.isin.meteoapp.R;
 import ch.supsi.dti.isin.meteoapp.activities.DetailActivity;
-import ch.supsi.dti.isin.meteoapp.activities.MainActivity;
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.db.DbSchema;
 import ch.supsi.dti.isin.meteoapp.db.LocationsContentValues;
@@ -39,15 +37,11 @@ import ch.supsi.dti.isin.meteoapp.model.Location;
 import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompletedLocations;
 import ch.supsi.dti.isin.meteoapp.tasks.WeatherTask;
-import ch.supsi.dti.isin.meteoapp.tasks.WeatherTaskCoordinate;
 import ch.supsi.dti.isin.meteoapp.tasks.WeathersTask;
 
 public class ListFragment extends Fragment implements OnTaskCompletedLocations {
     private static LocationAdapter adapter;
     private SQLiteDatabase database;
-
-    //TODO (delete part)
-    private boolean delete = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,29 +106,12 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
     }
 
 
-    //TODO (delete part) trovare un modo per far si che quando schiaccia il tasto cancella avviene una modifca alla grafica,
-    // cosi che l'utente puo iniziare a cancellare le citta
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
                 addNewLocation();
                 return true;
-                /*
-            case R.id.menu_del:
-                MenuItem menuItem;
-                try {
-                    menuItem = getActivity().findViewById(R.id.menu_del);
-                    if (delete = !delete) {
-                        //DrawableCompat.setTint(menuItem.getIcon(), Color.RED);
-                    }
-                    else{
-                        //DrawableCompat.setTint(menuItem.getIcon(), Color.WHITE);
-                    }
-                } catch (Exception e) {
-                    Log.e("Error", e.getMessage());
-                }
-                */
             default:
                 return super.onOptionsItemSelected(item);
         }
