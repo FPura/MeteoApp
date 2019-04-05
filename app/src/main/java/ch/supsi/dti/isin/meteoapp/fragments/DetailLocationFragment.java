@@ -64,7 +64,7 @@ public class DetailLocationFragment extends Fragment {
         cityNameView.setText(location.getName());
 
         // Set on View the temperature
-        tempView.setText(location.getWeather().getTemperature() +" °K");
+        tempView.setText(((int) (location.getWeather().getTemperature()-273.15)) + " °C");
 
         // Set on View the image
         imageView.setImageBitmap(location.getWeather().getBitmap());

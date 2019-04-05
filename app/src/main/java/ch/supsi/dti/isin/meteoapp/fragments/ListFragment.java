@@ -230,7 +230,7 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
             nameTextView.setText(location.getName());
             if (location.getWeather() != null) {
                 imageView.setImageBitmap(location.getWeather().getBitmap());
-                tempTextView.setText(location.getWeather().getTemperature() + " °K");
+                tempTextView.setText(((int) (location.getWeather().getTemperature()-273.15)) + " °C");
             }
             this.location = location;
         }
