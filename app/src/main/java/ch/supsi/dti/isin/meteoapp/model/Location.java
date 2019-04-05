@@ -11,6 +11,8 @@ public class Location {
     private double longitude;
     private double latitude;
     private Weather weather = null;
+    private boolean isCurrentLocation = false;
+
 
     private boolean nameChanged = false;
 
@@ -75,5 +77,13 @@ public class Location {
 
     public void setNameChanged(boolean nameChanged) {
         this.nameChanged = nameChanged;
+    }
+
+    public boolean isCurrentLocation() {
+        return isCurrentLocation;
+    }
+
+    public void setCurrentLocation(boolean currentLocation) {
+        isCurrentLocation = currentLocation;
     }
 }

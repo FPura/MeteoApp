@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.util.Log;
 
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.fragments.ListFragment;
+import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
+import ch.supsi.dti.isin.meteoapp.model.Weather;
 import ch.supsi.dti.isin.meteoapp.tasks.WeatherTaskCoordinate;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -39,7 +42,7 @@ public class MainActivity extends SingleFragmentActivity {
 
     // Current Location
     // TODO: vedere se vogliamo mantenerlo cosi o cambiarli il nome cosi da poterlo importare e istanziare normalemente
-    private ch.supsi.dti.isin.meteoapp.model.Location currentLocation = null;
+    private static ch.supsi.dti.isin.meteoapp.model.Location currentLocation = null;
 
     @Override
     protected Fragment createFragment() {
@@ -82,9 +85,12 @@ public class MainActivity extends SingleFragmentActivity {
                 .start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
+                        
                         // Check currentLocation is not null
-                        if (currentLocation == null)
+                        if (currentLocation == null) {
                             currentLocation = new ch.supsi.dti.isin.meteoapp.model.Location();
+                            currentLocation.setCurrentLocation(true);
+                        }
 
                         // Check it has the weather
                         if (currentLocation.getWeather() != null) {
@@ -93,11 +99,11 @@ public class MainActivity extends SingleFragmentActivity {
                             double currentTemperature = currentLocation.getWeather().getTemperature();
 
                             // Check the notification is not sent and the temperature is lower than 3 °G
-                            if (!sendedNotification && currentTemperature <= 276.15) {
+                            if (!sendedNotification && currentTemperature <= 286.15) {
                                 sendNotification(currentLocation);
                                 sendedNotification = true;
                             } // Check the notification is sent and the temperature is greater than 3 °G
-                            else if (sendedNotification && currentTemperature > 276.15) {
+                            else if (sendedNotification && currentTemperature > 286.15) {
                                 sendedNotification = false;
                             }
                         }
@@ -169,5 +175,11 @@ public class MainActivity extends SingleFragmentActivity {
 
         // Set the DB on listFragment
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
+
+
+        if(currentLocation != null){
+            WeatherTaskCoordinate weatherTask = new WeatherTaskCoordinate(listFragment, currentLocation);
+            weatherTask.execute();
+        }
     }
 }

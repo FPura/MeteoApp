@@ -36,6 +36,14 @@ public class LocationsHolder {
         locationsHolder.getLocations().add(mLocation);
     }
 
+    public static void addLocations(final List<Location> locations) {
+
+        if (locationsHolder == null)
+            locationsHolder = new LocationsHolder();
+
+        locationsHolder.getLocations().addAll(locations);
+    }
+
     public static void setLocations(final List<Location> locations) {
         locationsHolder = new LocationsHolder(locations);
     }
@@ -52,5 +60,12 @@ public class LocationsHolder {
                 return location;
         }
         return null;
+    }
+
+    public static void clear(){
+        if (locationsHolder == null)
+            locationsHolder = new LocationsHolder();
+
+        locationsHolder.getLocations().clear();
     }
 }

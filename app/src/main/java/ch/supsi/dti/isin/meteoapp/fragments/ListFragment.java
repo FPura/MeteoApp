@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import ch.supsi.dti.isin.meteoapp.R;
 import ch.supsi.dti.isin.meteoapp.activities.DetailActivity;
+import ch.supsi.dti.isin.meteoapp.activities.MainActivity;
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.db.DbSchema;
 import ch.supsi.dti.isin.meteoapp.db.LocationsContentValues;
@@ -36,10 +38,11 @@ import ch.supsi.dti.isin.meteoapp.model.Location;
 import ch.supsi.dti.isin.meteoapp.model.LocationsHolder;
 import ch.supsi.dti.isin.meteoapp.tasks.OnTaskCompletedLocations;
 import ch.supsi.dti.isin.meteoapp.tasks.WeatherTask;
+import ch.supsi.dti.isin.meteoapp.tasks.WeatherTaskCoordinate;
 import ch.supsi.dti.isin.meteoapp.tasks.WeathersTask;
 
 public class ListFragment extends Fragment implements OnTaskCompletedLocations {
-    private LocationAdapter adapter;
+    private static LocationAdapter adapter;
     private SQLiteDatabase database;
 
     //TODO (delete part)
@@ -191,6 +194,7 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
     @Override
     public void onTaskCompletedCoordinate(Location update) {
+
         if (update.getWeather() != null) {
             if (!checkIfIsDuplicate(update)) {
                 LocationsHolder.addLocation(update);
@@ -228,6 +232,10 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
         void bind(Location location) {
             nameTextView.setText(location.getName());
+            if(location.isCurrentLocation())
+                nameTextView.setTextColor(Color.RED);
+            else
+                nameTextView.setTextColor(Color.BLACK);
             if (location.getWeather() != null) {
                 imageView.setImageBitmap(location.getWeather().getBitmap());
                 tempTextView.setText(((int) (location.getWeather().getTemperature()-273.15)) + " °C");
