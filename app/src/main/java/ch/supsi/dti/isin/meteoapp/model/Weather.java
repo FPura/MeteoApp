@@ -28,35 +28,35 @@ public class Weather {
         this.temperature = temperature;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(final String locationName) {
-        this.locationName = locationName;
-    }
-
-    public String getMain() {
-        return main;
-    }
-
-    public void setMain(final String main) {
-        this.main = main;
-    }
-
     public Bitmap getBitmap() {
         return bitmap;
     }
 
     public void setBitmap(final Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public void setLocationName(final String locationName) {
+        this.locationName = locationName;
+    }
+
+    public void setMain(final String main) {
+        this.main = main;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public String getMain() {
+        return main;
     }
 }

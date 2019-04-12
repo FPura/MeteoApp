@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,18 +61,21 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
     // Update all the location weather
     private void updateAll() {
+
+        // Get locations
         List<Location> locations = LocationsHolder.get().getLocations();
+
+        // Get locations listener
         LocationsListener locationsListener = new LocationsListener();
+
+        // Start background task who update the view
         new WeathersTask(locationsListener, locations).execute();
     }
 
     // Notify the adapter all task was completed
     private class LocationsListener implements OnTaskCompletedLocations {
-        @Override
-        public void onTaskCompleted() {
-            adapter.notifyDataSetChanged();
-        }
 
+        // Notify when data is changed
         @Override
         public void onTaskCompleted(Location location) {
             adapter.notifyDataSetChanged();
@@ -102,13 +104,16 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+
+        // Add menu fragment
         inflater.inflate(R.menu.fragment_list, menu);
     }
 
-
+    // Menu button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // If pushed add button
             case R.id.menu_add:
                 addNewLocation();
                 return true;
@@ -117,6 +122,7 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
         }
     }
 
+    // Start a dialog for add new location
     public void addNewLocation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("City");
@@ -126,58 +132,72 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Location newLocation = new Location();
-                newLocation.setName(input.getText().toString());
+        // If push the OK button, we process the city and close the dialog
+        builder.setPositiveButton("OK", (dialog, which) -> {
 
-                Log.i("APIConnection", "Starting");
-                WeatherTask weatherTask = new WeatherTask(ListFragment.this, newLocation);
-                weatherTask.execute();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
+            // Create a new Location
+            Location newLocation = new Location();
+            newLocation.setName(input.getText().toString().toLowerCase());
+
+            // Start a new background task, who communicate white the API
+            WeatherTask weatherTask = new WeatherTask(ListFragment.this, newLocation);
+            weatherTask.execute();
         });
 
+        // If push the cancel button we close the dialog
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        // Show the dialog
         builder.show();
     }
 
 
-    boolean checkIfIsDuplicate(Location location) {
+    boolean checkIfIsNotDuplicate(Location location) {
         // Get locations
         List<Location> locations = LocationsHolder.get().getLocations();
 
         // Check if exists location
-        return locations.stream().anyMatch(l -> l.getName().equals(location.getName()));
+        return !locations.stream().anyMatch(l -> l.getName().equals(location.getName()));
     }
 
-    @Override
-    public void onTaskCompleted() {
-        adapter.notifyDataSetChanged();
-    }
-
+    // Update the view on task completed
     @Override
     public void onTaskCompleted(Location newLocation) {
-        if (newLocation.getWeather() != null && !checkIfIsDuplicate(newLocation)) {
+
+        // Check the weather is not null and there is not a duplicate
+        if (newLocation != null && newLocation.getWeather() != null && checkIfIsNotDuplicate(newLocation)) {
+
+            // We add the location in LocationHolder
             LocationsHolder.addLocation(newLocation);
+
+            // Notify the change
             adapter.notifyDataSetChanged();
+
+            // Insert the location in DB
             insertData(newLocation);
         }
     }
 
+    // Update the view on task completed
     @Override
     public void onTaskCompletedCoordinate(Location update) {
 
+        // Check the weather is not null
         if (update.getWeather() != null) {
-            if (!checkIfIsDuplicate(update)) {
+
+            // Check if is not duplicate
+            if (checkIfIsNotDuplicate(update)) {
+
+                // Add it on LocationsHolder
                 LocationsHolder.addLocation(update);
+
+                // We update the view
                 adapter.notifyDataSetChanged();
+
+                // If name is changed
             } else if (update.isNameChanged()) {
+
+                // Update the view
                 adapter.notifyDataSetChanged();
             }
         }
@@ -192,57 +212,80 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
         LocationHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item, parent, false));
+
+            // Set Listener
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+
+            // Set view
             nameTextView = itemView.findViewById(R.id.city_name);
             tempTextView = itemView.findViewById(R.id.temp);
             imageView = itemView.findViewById(R.id.previewWeather);
         }
 
+        // Start detail activity
         @Override
         public void onClick(View view) {
+
+            // Return an intent who contain location id and activity
             Intent intent = DetailActivity.newIntent(getActivity(), location.getId());
+
+            // Start activity
             startActivity(intent);
         }
 
+        // Delete the location
         @Override
-        public boolean onLongClick(View view){
+        public boolean onLongClick(View view) {
 
-            if(!location.isCurrentLocation()) {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                //Yes button clicked
-                                deleteData(location.getName());
-                                break;
+            // We can't delete the current location
+            if (!location.isCurrentLocation()) {
 
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //No button clicked
-                                break;
-                        }
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                    switch (which) {
+
+                        // Yes button is pushed, we delete the location
+                        case DialogInterface.BUTTON_POSITIVE:
+                            deleteData(location.getName());
+                            break;
+
+                        // Another view is pushed
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            break;
                     }
                 };
 
+                // Start dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                // We ask if is sure to delete the location
                 builder.setMessage("Are you sure you want to delete this location?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
-
             }
+
+            // we have to return a value
             return true;
         }
 
+        // Bind location to LocationHolder
         void bind(Location location) {
+            // Set the view name
             nameTextView.setText(location.getName());
-            if(location.isCurrentLocation())
+
+            // If location is current location, we change the text color to red otherwise is black
+            if (location.isCurrentLocation())
                 nameTextView.setTextColor(Color.RED);
             else
                 nameTextView.setTextColor(Color.BLACK);
+
+            // If weather is not null we set the temperature and image
             if (location.getWeather() != null) {
                 imageView.setImageBitmap(location.getWeather().getBitmap());
-                tempTextView.setText(((int) (location.getWeather().getTemperature()-273.15)) + " °C");
+                String text = (int) (location.getWeather().getTemperature() - 273.15) + " °C";
+                tempTextView.setText(text);
             }
+
+            // Set location
             this.location = location;
         }
     }
@@ -251,23 +294,34 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
     public class LocationAdapter extends RecyclerView.Adapter<LocationHolder> {
         private List<Location> locations;
 
+        // Set the locations
         LocationAdapter(List<Location> locations) {
             this.locations = locations;
         }
 
+        // Called when RecyclerView needs a new RecyclerView.ViewHolder of the given type to represent an item.
         @NonNull
         @Override
         public LocationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+            // Obtains the LayoutInflater from the activity.
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+
+            // Return the LocationHolder
             return new LocationHolder(layoutInflater, parent);
         }
 
+        // Bind Location to LocationHolder
         @Override
         public void onBindViewHolder(@NonNull LocationHolder holder, int position) {
+            // Get the location
             Location location = locations.get(position);
+
+            //Bind the location to LocationHolder
             holder.bind(location);
         }
 
+        // Get the size of locations
         @Override
         public int getItemCount() {
             return locations.size();
@@ -275,15 +329,19 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
 
     }
 
+    // Delete location from the DB
     private void deleteData(final String cityName) {
         // Remove it from the list
-        if(LocationsHolder.delete(cityName)) {
+        if (LocationsHolder.delete(cityName)) {
             // Delete it from DB
             database.delete(DbSchema.Table.NAME, "name" + " = \"" + cityName + "\" ;", null);
+
+            // Notify the change on view
             adapter.notifyDataSetChanged();
         }
     }
 
+    // Inset Location in to DB
     private void insertData(Location location) {
 
         // Create a DB values with location
@@ -337,10 +395,12 @@ public class ListFragment extends Fragment implements OnTaskCompletedLocations {
         }
     }
 
+    // Return the database instance
     public SQLiteDatabase getDB() {
         return database;
     }
 
+    // Set the database instance
     public void setDB(SQLiteDatabase mDatabase) {
         this.database = mDatabase;
     }

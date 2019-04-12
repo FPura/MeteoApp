@@ -42,7 +42,7 @@ public class JSONWeatherParser {
             JSONParser parser = new JSONParser();
             JSONObject resultObject = (JSONObject) parser.parse(json);
             //{"coord":{"lon":9.19,"lat":45.47},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}],"base":"stations","main":{"temp":283.86,"pressure":1015,"humidity":50,"temp_min":279.82,"temp_max":288.71},"visibility":10000,"wind":{"speed":1},"clouds":{"all":0},"dt":1554068446,"sys":{"type":1,"id":6742,"message":0.0057,"country":"IT","sunrise":1554008770,"sunset":1554054516},"id":3173435,"name":"Milano","cod":200}
-            cityName = resultObject.get("name").toString();
+            cityName = Objects.requireNonNull(resultObject.get("name")).toString();
         } catch (ParseException e) {
             Log.e("ERROR", e.toString());
         }

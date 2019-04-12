@@ -18,7 +18,10 @@ public class WeatherTask extends AsyncTask<Void, Void, Location> {
     // Create weather object, add it on the location and return it
     @Override
     protected Location doInBackground(Void... voids) {
-        Weather weather = new WeatherFetch().fetchItems( location.getName());
+        // Request the API location weather
+        Weather weather = new WeatherFetch().fetchItems(location.getName());
+
+        // Set it on Location
         location.setWeather(weather);
         return location;
     }

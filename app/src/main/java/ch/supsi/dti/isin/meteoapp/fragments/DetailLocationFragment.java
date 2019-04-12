@@ -39,7 +39,7 @@ public class DetailLocationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if( getArguments() != null){
+        if (getArguments() != null) {
             // Get the location UUID from Bundle
             UUID locationId = (UUID) getArguments().getSerializable(ARG_LOCATION_ID);
 
@@ -52,7 +52,7 @@ public class DetailLocationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        // Get a View from the fragment_detail_location file
+        // Get fragment detail location View from the fragment_detail_location file
         View view = inflater.inflate(R.layout.fragment_detail_location, container, false);
 
         // View which contain the cityName
@@ -64,7 +64,8 @@ public class DetailLocationFragment extends Fragment {
         cityNameView.setText(location.getName());
 
         // Set on View the temperature
-        tempView.setText(((int) (location.getWeather().getTemperature()-273.15)) + " °C");
+        String text = ((int) (location.getWeather().getTemperature() - 273.15)) + " °C";
+        tempView.setText(text);
 
         // Set on View the image
         imageView.setImageBitmap(location.getWeather().getBitmap());

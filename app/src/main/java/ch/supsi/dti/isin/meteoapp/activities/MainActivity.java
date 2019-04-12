@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import android.util.Log;
 import ch.supsi.dti.isin.meteoapp.db.DatabaseHelper;
 import ch.supsi.dti.isin.meteoapp.fragments.ListFragment;
 import ch.supsi.dti.isin.meteoapp.tasks.WeatherTaskCoordinate;
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
@@ -26,7 +24,7 @@ public class MainActivity extends SingleFragmentActivity {
     // Request granted code
     private static final int REQ_CODE = 100;
 
-    //TAG
+    //TAG for Log
     private final String PERMISSION_REQUEST_TAG = "Permission request";
     private final String PERMISSION_STATUS_TAG = "Permission status";
 
@@ -60,6 +58,7 @@ public class MainActivity extends SingleFragmentActivity {
             startLocationListener();
         }
 
+        // Create a new ListFragment
         listFragment = new ListFragment();
 
         return listFragment;
@@ -78,40 +77,37 @@ public class MainActivity extends SingleFragmentActivity {
          * https://github.com/mrmans0n/smart-location-lib/blob/master/library/src/main/java/io/nlopez/smartlocation/SmartLocation.java
          */
         SmartLocation.with(this).location().continuous().config(builder.build())
-                .start(new OnLocationUpdatedListener() {
-                    @Override
-                    public void onLocationUpdated(Location location) {
-                        
-                        // Check currentLocation is not null
-                        if (currentLocation == null) {
-                            currentLocation = new ch.supsi.dti.isin.meteoapp.model.Location();
-                            currentLocation.setCurrentLocation(true);
-                        }
+                .start(location -> {
 
-                        // Check it has the weather
-                        if (currentLocation.getWeather() != null) {
-
-                            // Get current temperature
-                            double currentTemperature = currentLocation.getWeather().getTemperature();
-
-                            // Check the notification is not sent and the temperature is lower than 3 °G
-                            if (!sentNotification && currentTemperature <= 286.15) {
-                                sendNotification(currentLocation);
-                                sentNotification = true;
-                            } // Check the notification is sent and the temperature is greater than 3 °G
-                            else if (sentNotification && currentTemperature > 286.15) {
-                                sentNotification = false;
-                            }
-                        }
-
-                        // Set Long and Lat of current location
-                        currentLocation.setLongitude(location.getLongitude());
-                        currentLocation.setLatitude(location.getLatitude());
-
-                        // Start background task
-                        WeatherTaskCoordinate weatherTask = new WeatherTaskCoordinate(listFragment, currentLocation);
-                        weatherTask.execute();
+                    // Check currentLocation is not null
+                    if (currentLocation == null) {
+                        currentLocation = new ch.supsi.dti.isin.meteoapp.model.Location();
+                        currentLocation.setCurrentLocation(true);
                     }
+
+                    // Check it has the weather
+                    if (currentLocation.getWeather() != null) {
+
+                        // Get current temperature
+                        double currentTemperature = currentLocation.getWeather().getTemperature();
+
+                        // Check the notification is not sent and the temperature is lower than 3 °G
+                        if (!sentNotification && currentTemperature <= 286.15) {
+                            sendNotification(currentLocation);
+                            sentNotification = true;
+                        } // Check the notification is sent and the temperature is greater than 3 °G
+                        else if (sentNotification && currentTemperature > 286.15) {
+                            sentNotification = false;
+                        }
+                    }
+
+                    // Set Long and Lat of current location
+                    currentLocation.setLongitude(location.getLongitude());
+                    currentLocation.setLatitude(location.getLatitude());
+
+                    // Start background task
+                    WeatherTaskCoordinate weatherTask = new WeatherTaskCoordinate(listFragment, currentLocation);
+                    weatherTask.execute();
                 });
     }
 
@@ -136,19 +132,24 @@ public class MainActivity extends SingleFragmentActivity {
 
     // Send the notification to user
     private void sendNotification(ch.supsi.dti.isin.meteoapp.model.Location location) {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        // Get notification manager
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Init the notify class
         NotificationChannel channel = new NotificationChannel("default", "TEST_CHANNEL", NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription("Test Channel Description");
-        mNotificationManager.createNotificationChannel(channel);
+        notificationManager.createNotificationChannel(channel);
 
+        // Build the notify
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "default")
                 .setSmallIcon(android.R.drawable.ic_menu_report_image)
                 .setContentTitle("Alert low temperature!")
-                .setContentText("Location: " + location.getName() + " - temp: " + location.getWeather().getTemperature() + " °K")
+                .setContentText("Location: " + location.getName() + " - temp: " + (location.getWeather().getTemperature() - 273.15) + " °C")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        mNotificationManager.notify(0, mBuilder.build());
+        // Show the notify
+        notificationManager.notify(0, mBuilder.build());
     }
 
     @Override
@@ -172,8 +173,9 @@ public class MainActivity extends SingleFragmentActivity {
         // Set the DB on listFragment
         listFragment.setDB(new DatabaseHelper(this).getWritableDatabase());
 
-
-        if(currentLocation != null){
+        // Check currentLocation is not null
+        if (currentLocation != null) {
+            // Start background task for API request
             WeatherTaskCoordinate weatherTask = new WeatherTaskCoordinate(listFragment, currentLocation);
             weatherTask.execute();
         }

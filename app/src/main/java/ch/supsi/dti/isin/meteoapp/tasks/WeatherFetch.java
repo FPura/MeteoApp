@@ -115,9 +115,8 @@ class WeatherFetch {
             // Get the city name by weather services
             String cityNameBYCoordinate = JSONWeatherParser.getCityName(jsonString);
 
+            // If name is changed
             if (location.getName() == null || location.getName().compareTo(cityNameBYCoordinate) != 0) {
-
-                Log.e("Location::", cityNameBYCoordinate);
 
                 // Parse the string and return the data
                 Weather weather = JSONWeatherParser.parse(jsonString);

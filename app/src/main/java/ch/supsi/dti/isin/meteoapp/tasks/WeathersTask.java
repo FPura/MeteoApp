@@ -32,6 +32,6 @@ public class WeathersTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void ignore) {
         if (listener != null)
-            listener.onTaskCompleted();
+            listener.onTaskCompleted(null);
     }
 }

@@ -9,6 +9,7 @@ import ch.supsi.dti.isin.meteoapp.R;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
+    // Abstract method for children
     protected abstract Fragment createFragment();
 
     // Save the contents

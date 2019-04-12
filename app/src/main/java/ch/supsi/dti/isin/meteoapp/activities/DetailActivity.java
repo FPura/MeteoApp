@@ -24,10 +24,11 @@ public class DetailActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
 
-        // Get location ID
+        // Get location I
         UUID locationId = (UUID) getIntent().getSerializableExtra(EXTRA_LOCATION_ID);
 
         // Return a new DetailLocationFragment
-        return new DetailLocationFragment().newInstance(locationId);
+        new DetailLocationFragment();
+        return DetailLocationFragment.newInstance(locationId);
     }
 }

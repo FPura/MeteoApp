@@ -18,9 +18,9 @@ public class LocationsHolder {
         this.locations = new ArrayList<>(locations);
     }
 
-    private void addAll(final List<Location> locations) {
+    /*private void addAll(final List<Location> locations) {
         this.locations.addAll(locations);
-    }
+    }*/
 
     public static LocationsHolder get() {
         if (locationsHolder == null)
@@ -36,6 +36,7 @@ public class LocationsHolder {
         locationsHolder.getLocations().add(mLocation);
     }
 
+    /*
     public static void addLocations(final List<Location> locations) {
 
         if (locationsHolder == null)
@@ -43,6 +44,7 @@ public class LocationsHolder {
 
         locationsHolder.getLocations().addAll(locations);
     }
+    */
 
     public static void setLocations(final List<Location> locations) {
         locationsHolder = new LocationsHolder(locations);
@@ -62,16 +64,16 @@ public class LocationsHolder {
         return null;
     }
 
-    public static boolean delete(String name){
+    public static boolean delete(String name) {
         if (locationsHolder == null)
             return false;
 
-       for(Location loc : locationsHolder.getLocations()){
-           if(loc.getName().equals(name)){
-               locationsHolder.getLocations().remove(loc);
-               return true;
-           }
-       }
-       return false;
+        for (Location loc : locationsHolder.getLocations()) {
+            if (loc.getName().equals(name)) {
+                locationsHolder.getLocations().remove(loc);
+                return true;
+            }
+        }
+        return false;
     }
 }
