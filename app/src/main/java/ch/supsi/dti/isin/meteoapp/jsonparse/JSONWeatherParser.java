@@ -13,7 +13,7 @@ import ch.supsi.dti.isin.meteoapp.model.Weather;
 
 public class JSONWeatherParser {
 
-    private final static String iconAPI = "http://openweathermap.org/img/w/";
+    private final static String iconAPI = "https://openweathermap.org/img/w/";
 
     public static Weather parse(final String json) {
         Weather weather = new Weather();

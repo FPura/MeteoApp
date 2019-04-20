@@ -90,7 +90,7 @@ class WeatherFetch {
             Weather weather = JSONWeatherParser.parse(jsonString);
 
             // Create the bitmap to get the icon
-            weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage().replace("http", "https")));
+            weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage()));
             return weather;
         } catch (Exception e) {
             Log.e("Exceptions", e.getMessage());
@@ -125,7 +125,7 @@ class WeatherFetch {
                 location.setName(cityNameBYCoordinate);
 
                 // Create the bitmap to get the icon
-                weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage().replace("http", "https")));
+                weather.setBitmap(getBitmapFromURL(weather.getWeatherResourceImage()));
 
                 // Set new weather
                 location.setWeather(weather);
