@@ -91,11 +91,11 @@ public class MainActivity extends SingleFragmentActivity {
                         // Get current temperature
                         double currentTemperature = currentLocation.getWeather().getTemperature();
 
-                        // Check the notification is not sent and the temperature is lower than 3 °G
+                        // Check the notification is not sent and the temperature is lower than 13 °G
                         if (!sentNotification && currentTemperature <= 286.15) {
                             sendNotification(currentLocation);
                             sentNotification = true;
-                        } // Check the notification is sent and the temperature is greater than 3 °G
+                        } // Check the notification is sent and the temperature is greater than 13 °G
                         else if (sentNotification && currentTemperature > 286.15) {
                             sentNotification = false;
                         }
@@ -137,15 +137,20 @@ public class MainActivity extends SingleFragmentActivity {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Init the notify class
-        NotificationChannel channel = new NotificationChannel("default", "TEST_CHANNEL", NotificationManager.IMPORTANCE_DEFAULT);
-        channel.setDescription("Test Channel Description");
-        notificationManager.createNotificationChannel(channel);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default", "TEST_CHANNEL", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Test Channel Description");
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // Round
+        double temp = Math.round((location.getWeather().getTemperature() - 273.15) * 100.0) / 100.0;
 
         // Build the notify
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "default")
                 .setSmallIcon(android.R.drawable.ic_menu_report_image)
                 .setContentTitle("Alert low temperature!")
-                .setContentText("Location: " + location.getName() + " - temp: " + (location.getWeather().getTemperature() - 273.15) + " °C")
+                .setContentText("Location: " + location.getName() + " - temp: " + temp + " °C")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // Show the notify
